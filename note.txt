@@ -5,4 +5,7 @@ This is overall note for the projects
     * some crouse will be displaye form youtube
 
 2. Mentor can upload crouse create by account
+    * teacher or mentor can be comments or replay
 3. student can leaarn from crouse any one can create account and enrolled by crouse its listed you profile
+    * student can be comments or query from tutorial
+4. 
