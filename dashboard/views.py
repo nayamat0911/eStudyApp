@@ -1,4 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 
-# Create your views here.
-def Homepage
+def HomePage(request):
+    home_context={
+        'title':'home',
+        'text':"this is Home page"
+    }
+    return render(request,'dashbord/base.html', content=home_context)
+
