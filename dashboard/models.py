@@ -10,7 +10,7 @@ class Notes(models.Model):
     description = models.TextField()
 
     class Meta:
-        # verbose_name = 'notes'
+        verbose_name = 'notes'
         verbose_name_plural = 'notes'
 
     def __str__(self):
