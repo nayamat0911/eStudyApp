@@ -1,5 +1,7 @@
 from email import message
+from multiprocessing import context
 from pyexpat import model
+from unittest import result
 from django.contrib import messages
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.urls import is_valid_path
@@ -41,8 +43,10 @@ def Delete_Note(request, pk):
 
 class NotesDetailView(generic.DetailView):
     model = Notes
+#   end Notes -------------------------------------
 
-# HomeWork----------------------------------------
+# HomeWork---------------------------------------------------------
+# import Homework--------
 from . models import HomeWork
 from .forms import *
 
@@ -92,3 +96,88 @@ def update_homework(request, pk=None):
         homework.is_finished == True
     homework.save(request.user)
     return redirect('dashboard_app:home_work')
+
+def delete_homework(request, pk):
+    HomeWork.objects.get(pk=pk).delete()
+    messages.warning(request, f"A homework deleted by '{request.user.username}'.")
+    return redirect('dashboard_app:home_work')
+
+# end Homework---------------------------------------
+#  You tube section start----===================================
+from .forms import *
+from youtubesearchpython import VideosSearch
+def youtube(request):
+    if request.method == "POST":
+        form = DashBoardForm(request.POST)
+        text = request.POST['text']
+        video = VideosSearch(text,limit=10)
+        result_list =[]
+        for i in video.result()['result']:
+            result_dict = {
+                'input':text,
+                'title':i['title'],
+                'duration':i['duration'],
+                'thumbnail':i['thumbnails'][0]['url'],
+                'channel':i['channel']['name'],
+                'link':i['link'],
+                'views':i['viewCount']['short'],
+                'published':i['publishedTime'],
+            }
+            desc = ''
+            if i['descriptionSnippet']:
+                for j in i['descriptionSnippet']:
+                    desc += j['text']
+            result_dict['description'] = desc
+            result_list.append(result_dict)
+            context = {
+                'form':form,
+                'results': result_list,
+            }
+        return render(request, 'dashboard/youtube.html', context=context)
+    else:
+        form = DashBoardForm()
+
+    context = {
+        'form':form,
+    }
+    return render(request, 'dashboard/youtube.html', context=context)
+
+# end youtube--------------------------------
+# start TO DO===========================================================
+from . forms import TodoForm
+from . models import TODO
+
+def To_Do(request):
+    if request.method =="POST":
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            try:
+                finished = request.POST['is_finished']
+                if finished == 'on':
+                    finished = True
+                else:
+                    finished = False
+            except:
+                finished =False
+            todos = TODO(
+                user = request.user,
+                title = request.POST['title'],
+                is_finished = finished
+            )
+            todos.save()
+            messages.success(request, f"Todo added from {request.user.username}!!.")
+    else:       
+        form = TodoForm()
+    todo = TODO.objects.filter(user = request.user)
+
+    if len(todo) == 0:
+        todos_done =True
+    else:
+        todos_done = False
+
+    context = {
+        'todos':todo,
+        'form':form,
+        'todos_done':todos_done
+    }
+    return render(request, 'dashboard/todo.html',context=context)
