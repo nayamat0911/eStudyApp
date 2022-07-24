@@ -1,7 +1,3 @@
-from email import message
-from multiprocessing import context
-from pyexpat import model
-from unittest import result
 from django.contrib import messages
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.urls import is_valid_path
@@ -181,3 +177,58 @@ def To_Do(request):
         'todos_done':todos_done
     }
     return render(request, 'dashboard/todo.html',context=context)
+
+# update to do--------------
+
+def update_todo(request, pk):
+    todo = TODO.objects.get(pk=pk)
+    if todo.is_finished == True:
+        todo.is_finished = False
+    else:
+        todo.is_finished = True
+    todo.save()
+    return redirect('dashboard_app:to_do')  
+
+def delete_todo(request, pk):
+    TODO.objects.get(pk=pk).delete()
+    return redirect('dashboard_app:to_do')
+# end todo-------------------------------------
+
+# start books session =============================================
+import requests
+
+
+def books(request):
+    if request.method == "POST":
+        form = DashBoardForm(request.POST)
+        text = request.POST['text']
+        url = "https://www.googleapis.com/books/v1/volumes?q="+text
+        r = requests.get(url)
+        answer = r.json() 
+        result_list =[]
+        for i in range(10):
+            result_dict = {
+                'title':answer['items'][i]['volumeInfo']['title'],
+                'subtitle':answer['items'][i]['volumeInfo'].get('subtitle'),
+                'description':answer['items'][i]['volumeInfo'].get('description'),
+                'count':answer['items'][i]['volumeInfo'].get('pageCount'),
+                'categories':answer['items'][i]['volumeInfo'].get('categories'),
+                'rating':answer['items'][i]['volumeInfo'].get('pageRating'),
+                'thumbnail':answer['items'][i]['volumeInfo'].get('imageLinks').get('thumbnail'),
+                'preview':answer['items'][i]['volumeInfo'].get('previewLink'),
+                
+            }
+            
+            result_list.append(result_dict)
+            context = {
+                'form':form,
+                'results': result_list,
+            }
+        return render(request, 'dashboard/books.html', context=context)
+    else:
+        form = DashBoardForm()
+
+    context = {
+        'form':form,
+    }
+    return render(request, 'dashboard/books.html',context=context)
