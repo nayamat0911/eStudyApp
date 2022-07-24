@@ -19,8 +19,13 @@ urlpatterns = [
     path('youtube/', views.youtube, name='youtube'),
 
     #to-do-----------
-    path('to-do/', views.To_Do, name='to_do'),
+    path('todo/', views.To_Do, name='to_do'),
+    path('update-todo/<int:pk>', views.update_todo, name='update_todo'),
+    path('delete-todo/<int:pk>', views.delete_todo, name='delete_todo'),
     
+    # books-----------
+    path('books/', views.books, name='books'),
+
 
 
 

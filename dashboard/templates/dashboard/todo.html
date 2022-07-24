@@ -18,10 +18,10 @@
         <tbody>
             {% for todo in todos %}
             <tr>
-                <th scope="row">{{forloop.count}}</th>
+                <th scope="row">{{forloop.counter}}</th>
                 <td>{{todo.title}}</td>
                 <td>
-                    <a href="#">
+                    <a href="{% url 'dashboard_app:update_todo' todo.id %}">
                         <div class="form-check">
                             {% if todo.is_finished == True  %}
                             <input class="form-check-input" type="checkbox" value="" checked>
@@ -34,8 +34,7 @@
                         </div>
                     </a>
                 </td>
-
-                <td><a href="#"><i class="fa fa-trash fa-2x"></i></a></td>
+                <td><a href="{% url 'dashboard_app:delete_todo' todo.id %}"><i class="fa fa-trash fa-2x"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>
