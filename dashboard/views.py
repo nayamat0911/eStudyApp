@@ -1,6 +1,7 @@
+
 from django.contrib import messages
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
-from django.urls import is_valid_path
+
 
 
 
@@ -232,3 +233,67 @@ def books(request):
         'form':form,
     }
     return render(request, 'dashboard/books.html',context=context)
+
+# end books session-----------------
+
+# start Dictionary =================================================
+
+def dictionary(request):
+    if request.method == "POST":
+        form = DashBoardForm(request.POST)
+        text = request.POST['text']
+        url = "https://api.dictionaryapi.dev/api/v2/entries/en/"+text
+        r = requests.get(url)
+        answer = r.json() 
+        try:
+            phonetics = answer[0]['phonetics'][0]['text']
+            audio = answer[0]['phonetics'][0]['audio']
+            definition = answer[0]['meanings'][0]['definitions'][0]['definition']
+            example = answer[0]['meanings'][0]['definitins'][0]['example']
+            synonyms = answer[0]['meanings'][0]['definitions']['synonyms']
+            context_dic = {
+                'form':form,
+                'input':text,
+                'phonetics':phonetics,
+                'audio':audio,
+                'definition':definition,
+                'example':example,
+                'synonyms':synonyms,
+            }
+        except:
+            context_dic={
+                'form':form,
+                'input':''
+                }
+        return render(request,'dashboard/dictionary.html',context=context_dic)
+    else:
+        form = DashBoardForm()
+    context_dic = {
+        'form':form,
+
+    }
+    return render(request, 'dashboard/dictionary.html',context=context_dic)
+
+# end dictionary -------------------------------------
+# start wiki =======================================================
+import wikipedia
+
+def wiki(request):
+    if request.method == "POSt":
+        text = request.POST['text']
+        form = DashBoardForm(request.POST)
+        search = wikipedia.page(text)
+        context={
+            'form':form,
+            'title':search.title,
+            'link':search.url,
+            'details':search.summary,
+
+        }
+        return render(request, 'dashboard/wiki.html',context)
+    else:
+        form = DashBoardForm()
+        context={
+            'form':form,
+        }
+    return render(request, 'dashboard/wiki.html',context)

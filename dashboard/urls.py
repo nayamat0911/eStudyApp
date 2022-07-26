@@ -26,6 +26,11 @@ urlpatterns = [
     # books-----------
     path('books/', views.books, name='books'),
 
+    # dictionary -------
+    path('dictionary/', views.dictionary, name='dictionary'),
+
+    # wiki ----------------
+    path('wiki/', views.wiki, name = 'wiki')
 
 
 
