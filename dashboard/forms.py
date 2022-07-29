@@ -2,7 +2,7 @@ from dataclasses import fields
 from pyexpat import model
 from django import forms
 from . models import *
-import django.forms.widgets
+from django.contrib.auth.forms import UserCreationForm
 
 class NoteForm(forms.ModelForm):
     class Meta:
@@ -66,3 +66,9 @@ class ConversionMassForm(forms.Form):
         label='',widget=forms.Select(choices=CHOICES)
     )
     
+
+
+class UserRegistationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
