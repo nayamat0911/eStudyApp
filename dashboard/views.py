@@ -366,6 +366,7 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f"Account Created for {username} !!")
+            return redirect('login')
     else:
         form = UserRegistationForm()
     context = {
@@ -374,4 +375,23 @@ def register(request):
     return render(request, 'dashboard/register.html', context)
 
 
+def profile(request):
+    homeworks = HomeWork.objects.filter(is_finished = False, user = request.user)
+    todos = TODO.objects.filter(is_finished = False, user = request.user)
+    if len(homeworks) == 0:
+        homework_done = True
+    else:
+        homework_done = False
+    if len(todos) == 0:
+        todos_done = True
+    else:
+        todos_done= False
+    context = {
+        'homeworks':homeworks,
+        'homework_done':homework_done,
+        'todos':todos,
+        'todos_done':todos_done,
 
+    }
+    
+    return render(request, 'dashboard/profile.html', context)
